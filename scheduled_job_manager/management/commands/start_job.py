@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from scheduled_job_manager.manager import start_job
+from scheduled_job_manager.exceptions import JobStartFailureException
 from datetime import datetime
 import logging
 
@@ -26,6 +27,9 @@ class Command(BaseCommand):
         cluster = options.get('cluster_label')
         host = options.get('host_label')
         job = options.get('job_label')
-        start_job(cluster, host, job)
-        logger.info('At {0} signal sent for {1}:{2}:{3}'.format(
-            now.strftime('%Y%m%d-%H:%M:%S'), cluster, host, job))
+        try:
+            start_job(cluster, host, job)
+            logger.info('At {0} signal sent for {1}:{2}:{3}'.format(
+                now.strftime('%Y%m%d-%H:%M:%S'), cluster, host, job))
+        except JobStartFailureException as ex:
+            logger.error('{0}'.format(ex))

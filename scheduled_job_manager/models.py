@@ -118,17 +118,18 @@ class Job(models.Model):
     def json_data(self):
         return {
             'job_id': self.job_id,
-            'task': {
-                'cluster': self.schedule.task.member.cluster.label,
-                'member': self.schedule.task.member.label,
-                'task': self.schedule
-            },
-            'launch_date': localtime(self.launch_date).isoformat() if (
-                self.launch_date is not None) else None
+            'task': self.schedule.task.json_data(),
+            'datetime_launch': self.datetime_launch,
+            'datetime_recent_response': self.datetime_recent_response,
+            'datetime_start': self.datetime_start,
+            'datetime_exit': self.datetime_exit,
+            'progress': self.progress,
+            'exit_status': self.exit_status,
+            'exit_output': self.exit_output
         }
 
     def launch(self):
         if self.is_running():
             raise ScheduledJobRunning()
 
-        notify_job_clients('launch', self.json_data)
+        notify_job_clients('launch', self.json_data())

@@ -23,7 +23,7 @@ setup(
     author_email="aca-it@uw.edu",
     include_package_data=True,
     install_requires=[
-        'Django==1.11.10',
+        'Django<1.11',
         'boto3',
         'simplejson',
         'django-compressor',
