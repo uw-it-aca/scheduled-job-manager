@@ -1,0 +1,24 @@
+sudo: false
+language: python
+python:
+  - "2.7"
+  - "3.6"
+
+install:
+  - sudo apt-get install -qq python-dev libxml2-dev libxmlsec1-dev
+before_script:
+  - pip install -r requirements.txt
+  - pip install coverage
+  - pip install coveralls
+  - pip install pycodestyle
+  - pip install MySQL-python
+  - npm install coveralls
+  - cp travis-ci/manage.py manage.py
+  - python manage.py migrate
+
+script:
+  - pycodestyle scheduled_job_manager/ --exclude=migrations,scheduled_job_manager/static/vendor,scheduled_job_manager/static/images,scheduled_job_manager/static/fonts
+  - coverage run --source=/ --omit=scheduled_job_manager/migrations/* manage.py test scheduled_job_manager
+after_script:
+  - coveralls
+notifications:
