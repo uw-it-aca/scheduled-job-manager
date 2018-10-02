@@ -46,4 +46,4 @@ def monitor_job_responses():
     try:
         Gather(processor=JobResponseProcessor()).gather_events()
     except Exception as ex:
-        logger.exception("Gather JobResponseProcessor: %s" % ex)
+        logger.exception("Gather JobResponseProcessor: {0}".format(ex))

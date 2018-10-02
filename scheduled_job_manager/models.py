@@ -25,6 +25,7 @@ class Member(models.Model):
     cluster = models.ForeignKey(Cluster,
                                 on_delete=models.PROTECT)
     label = models.CharField(max_length=128)
+    datetime_last_updated = models.DateTimeField(null=True)
 
 
 class Task(models.Model):

@@ -9,6 +9,14 @@ class JobStartFailureException(Exception):
     pass
 
 
+class UnrecognizedJobResponse(Exception):
+    pass
+
+
+class InvalidJobResponse(Exception):
+    pass
+
+
 class ScheduledJobRunning(Exception):
     pass
 
