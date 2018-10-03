@@ -45,28 +45,34 @@ class JobResponseProcessor(InnerMessageProcessor):
 
             logger.debug("{0}: {1}".format(action, data))
             if action == 'register':
-                # cluster member's available jobs
-                for job in data['JobList']:
-                    task, create = Task.objects.get_or_create(
-                        member=member, label=job)
+                job_list = data['JobList']
+
+                for known in Task.objects.filter(member=member):
+                    if known.label in job_list:
+                        job_list.remove(known.label)
+                        known.unavailable = None
+                    else:
+                        known.unavailable = True
+
+                    known.save()
+
+                for label in job_list:
+                    Task.objects.create(member=member, label=label)
 
             elif action == 'launch':
                 # specific job start data
                 try:
                     label = data['JobLabel']
-                    task = Task.objects.get(member=member, label=label)
-                    schedule, create = Schedule.objects.get_or_create(
-                        task=task)
-                    job, create = Job.objects.get_or_create(
-                        schedule=schedule, job_id=data['JobId'],
-                        datetime_start=parse(data['StartDate']),
-                        datetime_last_updated=datetime.now())
+
+                    job = Job.objects.get(job_id=data['JobId'])
+                    job.datetime_launch = parse(data['StartDate'])
+                    job.save()
 
                     if job.is_running():
                         logger.error('launch task already running {0}'.format(
-                            task.json_data()))
+                            job.task.json_data()))
 
-                except Task.DoesNotExist:
+                except Job.DoesNotExist:
                     logger.error('unknown launch task {0}'.format(label))
 
             elif action == 'exit':
@@ -82,7 +88,6 @@ class JobResponseProcessor(InnerMessageProcessor):
 
             elif action == 'progress':
                 # specific job progress
-                logger.debug('progress from {0}'.format(task.json_data()))
                 try:
                     job = Job.objects.get(job_id=data['JobId'])
                     job.progress = int(data['Progress'])
@@ -90,9 +95,16 @@ class JobResponseProcessor(InnerMessageProcessor):
                 except Job.DoesNotExist:
                     logger.error('unknown progress job {0}'.format(label))
 
-            elif action == 'ping':
-                # response to general health query, datetime recorded above
-                logger.debug('ping from {0}'.format(task.json_data()))
+            elif action == 'error':
+                # error report
+                error_cause = data['Cause']
+                error_data = data['Data']
+                logger.error('error from {0}: cause: {1}: Data: {2}'.format(
+                    task.json_data(), error_cause, error_data))
+
+                if error_cause == 'invalid_job_label':
+                    task.unavailable = True
+                    task.save()
 
             else:
                 logger.error('Unrecognized Job Action: {0}'.format(action))

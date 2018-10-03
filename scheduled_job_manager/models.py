@@ -2,8 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.utils.timezone import localtime
-from scheduled_job_manager.dao.sns import notify_job_clients
+from scheduled_job_manager.notification import notify_job_start
 from scheduled_job_manager.exceptions import ScheduledJobRunning
 from uuid import uuid1
 from datetime import datetime, timedelta
@@ -34,6 +33,7 @@ class Task(models.Model):
     member = models.ForeignKey(Member,
                                on_delete=models.PROTECT)
     label = models.CharField(max_length=128)
+    unavailable = models.NullBooleanField()
     datetime_last_updated = models.DateTimeField(null=True)
 
     def is_stale(self):
@@ -44,7 +44,7 @@ class Task(models.Model):
         return {
             'cluster': self.member.cluster.label,
             'member': self.member.label,
-            'task': self.label
+            'label': self.label
         }
 
 
@@ -101,7 +101,7 @@ class Job(models.Model):
     datetime_recent_response = models.DateTimeField(null=True)
     datetime_start = models.DateTimeField(null=True)
     datetime_exit = models.DateTimeField(null=True)
-    progress = models.SmallIntegerField(default=-1)
+    progress = models.SmallIntegerField(null=True)
     exit_status = models.SmallIntegerField(null=True)
     exit_output = models.CharField(max_length=512, null=True)
 
@@ -118,7 +118,7 @@ class Job(models.Model):
 
     def json_data(self):
         return {
-            'job_id': self.job_id,
+            'job_id': '{}'.format(self.job_id),
             'task': self.schedule.task.json_data(),
             'datetime_launch': self.datetime_launch,
             'datetime_recent_response': self.datetime_recent_response,
@@ -133,4 +133,4 @@ class Job(models.Model):
         if self.is_running():
             raise ScheduledJobRunning()
 
-        notify_job_clients('launch', self.json_data())
+        notify_job_start(self.json_data())

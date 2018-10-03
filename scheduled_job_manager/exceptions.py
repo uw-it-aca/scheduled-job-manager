@@ -21,5 +21,9 @@ class ScheduledJobRunning(Exception):
     pass
 
 
+class ScheduledJobNotRunning(Exception):
+    pass
+
+
 class SNSPublishFailure(Exception):
     pass

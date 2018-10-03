@@ -14,8 +14,8 @@ def notify_job_clients(message_type, message_data):
     response = client.publish(
         TopicArn=config.get('NOTIFICATION').get('TOPIC_ARN'),
         Message=json.dumps({
-            'type': message_type,
-            'message': message_data
+            'Action': message_type,
+            'Data': message_data
         }))
 
     if 'MessageId' not in response:
