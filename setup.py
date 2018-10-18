@@ -29,6 +29,7 @@ setup(
         'django-compressor',
         'django-userservice>=3.1,<4.0',
         'pytz',
+        'AuthZ-Group>=1.6,<2.0',
         'UW-Django-SAML2>=1.0,<2.0',
         'django-aws-message>=1.1,<2.0',
         'Django-SupportTools>=3.1.1,<4.0',
