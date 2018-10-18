@@ -75,36 +75,35 @@ class JobResponseProcessor(InnerMessageProcessor):
                 except Job.DoesNotExist:
                     logger.error('unknown launch task {0}'.format(label))
 
-            elif action == 'exit':
-                # specific job exit status and any associated data
-                try:
-                    job = Job.objects.get(job_id=data['JobId'])
-                    job.exit_status = data['ExitStatus']
-                    job.exit_output = data['ExitOutput']
-                    job.datetime_exit = parse(data['EndDate'])
-                    job.save()
-                except Job.DoesNotExist:
-                    logger.error('unknown exit job {0}'.format(label))
-
-            elif action == 'progress':
-                # specific job progress
-                try:
-                    job = Job.objects.get(job_id=data['JobId'])
-                    job.progress = int(data['Progress'])
-                    job.save()
-                except Job.DoesNotExist:
-                    logger.error('unknown progress job {0}'.format(label))
+            elif action == 'status':
+                for job_id, job_state in data['Jobs'].items():
+                    try:
+                        job = Job.objects.get(job_id=job_id)
+                        job.progress = int(job_state['Progress'])
+                        job.exit_status = job_state['ExitStatus']
+                        job.exit_output = job_state['ExitOutput']
+                        job.datetime_exit = parse(job_state['EndDate'])
+                        job.save()
+                    except Job.DoesNotExist:
+                        logger.error('unknown progress job {0}'.format(job_id))
 
             elif action == 'error':
                 # error report
-                error_cause = data['Cause']
-                error_data = data['Data']
-                logger.error('error from {0}: cause: {1}: Data: {2}'.format(
-                    task.json_data(), error_cause, error_data))
+                try:
+                    error_cause = data['Cause']
+                    error_data = data['Data']
+                    job = Job.objects.get(job_id=data['JobId'])
+                    logger.error(
+                        'error from {0}: cause: {1}: Data: {2}'.format(
+                            job.json_data(), error_cause, error_data))
 
-                if error_cause == 'invalid_job_label':
-                    task.unavailable = True
-                    task.save()
+                    if (error_cause == 'invalid_job_label' or
+                            error_cause == 'invalid_job_configuration'):
+                        job.schedule.task.unavailable = True
+                        job.schedule.task.save()
+                except Job.DoesNotExist:
+                    logger.error(
+                        'unknown job reporting error {0}'.format(label))
 
             else:
                 logger.error('Unrecognized Job Action: {0}'.format(action))
