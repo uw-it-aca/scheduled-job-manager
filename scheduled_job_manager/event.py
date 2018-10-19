@@ -2,7 +2,7 @@
 Process Job Response Queue
 """
 
-from scheduled_job_manager.models import Cluster, Member, Task, Schedule, Job
+from scheduled_job_manager.models import Cluster, Member, Task, Job
 from scheduled_job_manager.exceptions import (
     UnrecognizedJobResponse, InvalidJobResponse)
 from aws_message.processor import InnerMessageProcessor, ProcessorException
@@ -32,6 +32,11 @@ class JobResponseProcessor(InnerMessageProcessor):
         Each status change message body contains a single event
         """
         try:
+            if json_data['Type'] != 'ScheduledJobMessage':
+                raise InvalidJobResponse(
+                    'Unrecognized message type {}'.format(
+                        json_data['Type']))
+
             cluster, created = Cluster.objects.get_or_create(
                 label=json_data['Cluster']['ClusterName'])
             member, created = Member.objects.get_or_create(
@@ -43,7 +48,8 @@ class JobResponseProcessor(InnerMessageProcessor):
             action = json_data['Action'].lower()
             data = json_data['Data']
 
-            logger.debug("{0}: {1}".format(action, data))
+            logger.info("{} - {}.{}: {}".format(
+                action, cluster.label, member.label, data))
             if action == 'register':
                 job_list = data['JobList']
 
@@ -70,7 +76,7 @@ class JobResponseProcessor(InnerMessageProcessor):
 
                     if job.is_running():
                         logger.error('launch task already running {0}'.format(
-                            job.task.json_data()))
+                            job.schedule.task.json_data()))
 
                 except Job.DoesNotExist:
                     logger.error('unknown launch task {0}'.format(label))
@@ -79,10 +85,13 @@ class JobResponseProcessor(InnerMessageProcessor):
                 for job_id, job_state in data['Jobs'].items():
                     try:
                         job = Job.objects.get(job_id=job_id)
-                        job.progress = int(job_state['Progress'])
-                        job.exit_status = job_state['ExitStatus']
+                        job.progress = int(job_state['Progress']) if (
+                            job_state['Progress']) else None
+                        job.exit_status = int(job_state['ExitStatus']) if (
+                            job_state['ExitStatus']) else None
                         job.exit_output = job_state['ExitOutput']
-                        job.datetime_exit = parse(job_state['EndDate'])
+                        job.datetime_exit = parse(job_state['EndDate']) if (
+                            job_state['EndDate']) else None
                         job.save()
                     except Job.DoesNotExist:
                         logger.error('unknown progress job {0}'.format(job_id))
@@ -109,6 +118,9 @@ class JobResponseProcessor(InnerMessageProcessor):
                 logger.error('Unrecognized Job Action: {0}'.format(action))
                 raise UnrecognizedJobResponse(action)
 
+        except (KeyError, UnrecognizedJobResponse, InvalidJobResponse) as ex:
+            # log the error, but accept the message as processed
+            logger.error('Job Response Error: {}'.format(ex))
         except Exception as ex:
-            logger.exception('Invalid Job Action: {0}'.format(ex))
-            raise InvalidJobResponse('{0}'.format(json_data))
+            logger.exception('Job Event Exception: {0}'.format(ex))
+            raise JobResponseProcessorException('{0}'.format(json_data))

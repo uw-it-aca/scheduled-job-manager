@@ -7,12 +7,6 @@ def notify_job_start(json_data):
     notify_job_clients('launch', json_data)
 
 
-def notify_job_terminate(json_data):
-    """Prompt cluster member to start job
-    """
-    notify_job_clients('terminate', json_data)
-
-
 def notify_member_status():
     """Prompt cluster members to report status
     """

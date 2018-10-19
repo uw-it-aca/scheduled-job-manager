@@ -5,6 +5,7 @@ from django.db import models
 from scheduled_job_manager.notification import notify_job_start
 from scheduled_job_manager.exceptions import ScheduledJobRunning
 from uuid import uuid1
+from django.utils.timezone import localtime
 from datetime import datetime, timedelta
 from logging import getLogger
 
@@ -114,23 +115,28 @@ class Job(models.Model):
         super(Job, self).save(*args, **kwargs)
 
     def is_running(self):
-        return self.exit_status is not None
+        return self.exit_status is None
 
     def json_data(self):
         return {
             'job_id': '{}'.format(self.job_id),
             'task': self.schedule.task.json_data(),
-            'datetime_launch': self.datetime_launch,
-            'datetime_recent_response': self.datetime_recent_response,
-            'datetime_start': self.datetime_start,
-            'datetime_exit': self.datetime_exit,
+            'datetime_launch': localtime(
+                self.datetime_launch).isoformat() if (
+                    self.datetime_launch is not None) else None,
+            'datetime_recent_response': localtime(
+                self.datetime_recent_response).isoformat() if (
+                    self.datetime_recent_response is not None) else None,
+            'datetime_start': localtime(
+                self.datetime_start).isoformat() if (
+                    self.datetime_start is not None) else None,
+            'datetime_exit': localtime(
+                self.datetime_exit).isoformat() if (
+                    self.datetime_exit is not None) else None,
             'progress': self.progress,
             'exit_status': self.exit_status,
             'exit_output': self.exit_output
         }
 
     def launch(self):
-        if self.is_running():
-            raise ScheduledJobRunning()
-
         notify_job_start(self.json_data())
