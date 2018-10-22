@@ -1,7 +1,7 @@
 {% verbatim %}
 <script id="job-table-template" type="text/x-handlebars-template">
-  <div>
-    Scheduled, running and jobs that have finished are listed below.  Refresh in <span class="countdown">{{ refresh }}</span> seconds.
+  <div class="intro">
+    Scheduled, running and finished jobs are listed below.  Data will refresh in <span class="countdown">{{ refresh }}</span> seconds.
   </div>
   <table>
     <thead>
@@ -29,10 +29,9 @@
         </td>
         <td>
           {{#if exit_date}}
-          {{ exit_date }}
+          Finished on {{ exit_date }}
           {{else}}
-          Running 
-          <div class="progress">
+          Running <div class="progress">
             <div class="progress-bar progress-bar-striped progess-bar-animated" role="progressbar" style="width: {{ progress }}%" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">{{ progress }} %</div>
           </div>
           {{/if}}
