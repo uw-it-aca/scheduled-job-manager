@@ -1,0 +1,116 @@
+{% load user_agents %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Scheduled Job Manager</title>
+    <meta name="viewport"
+          content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    {% load compress %}
+
+    {% load static %}
+
+
+    <!-- stylesheets -->
+    <!-- critical (above the fold styles) -->
+{% if request|is_mobile %}
+    {% compress css inline %}
+    <link rel="stylesheet" href="{% static 'vendor/css/bootstrap-3.3.7.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/css/font-awesome-4.2.0.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/css/ionicons-2.0.1.min.css' %}">
+    <link rel="stylesheet" href="{% static 'scheduled_job_manager/css/loading.scss' %}" type="text/x-scss">
+    <link rel="stylesheet" href="{% static 'scheduled_job_manager/css/critical.scss' %}" type="text/x-scss">
+    {% endcompress %}
+    <!-- async (mobile) -->
+    {% compress css %}
+    <link rel="stylesheet" href="{% static 'scheduled_job_manager/css/mobile.scss' %}" type="text/x-scss">
+    {% endcompress %}
+{% endif %}
+
+
+{% if request|is_tablet %}
+    <!-- critical (above the fold styles) -->
+    {% compress css inline %}
+    <!-- inline -->
+    <link rel="stylesheet" href="{% static 'vendor/css/bootstrap-3.3.7.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/css/font-awesome-4.2.0.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/css/ionicons-2.0.1.min.css' %}">
+    <link rel="stylesheet" href="{% static 'scheduled_job_manager/css/loading.scss' %}" type="text/x-scss">
+    <link rel="stylesheet" href="{% static 'scheduled_job_manager/css/critical.scss' %}" type="text/x-scss">
+    {% endcompress %}
+    <!-- async (mobile + tablet) -->
+    {% compress css %}
+    <link rel="stylesheet" href="{% static 'scheduled_job_manager/css/mobile.scss' %}" type="text/x-scss">
+    <link rel="stylesheet" href="{% static 'scheduled_job_manager/css/tablet.scss' %}" type="text/x-scss">
+    {% endcompress %}
+{% endif %}
+
+{% if request|is_pc %}
+    <!-- critical (above the fold styles) -->
+    {% compress css inline %}
+    <link rel="stylesheet" href="{% static 'vendor/css/bootstrap-3.3.7.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/css/font-awesome-4.2.0.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/css/ionicons-2.0.1.min.css' %}">
+    <link rel="stylesheet" href="{% static 'scheduled_job_manager/css/loading.scss' %}" type="text/x-scss">
+    <link rel="stylesheet" href="{% static 'scheduled_job_manager/css/critical.scss' %}" type="text/x-scss">
+    <link rel="stylesheet" href="{% static 'scheduled_job_manager/css/mobile.scss' %}" type="text/x-scss">
+    <link rel="stylesheet" href="{% static 'scheduled_job_manager/css/tablet.scss' %}" type="text/x-scss">
+    <link rel="stylesheet" href="{% static 'scheduled_job_manager/css/desktop.scss' %}" type="text/x-scss">
+    {% endcompress %}
+
+    <!-- async (mobile + tablet + desktop) -->
+    {% compress css %}
+    {% endcompress %}
+{% endif %}
+
+<!-- Google Fonts -->
+<link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+
+<link rel="shortcut icon" href="{% static 'scheduled_job_manager/img/favicon.ico' %}" type="image/x-icon">
+
+  </head>
+
+  <body>
+    {% csrf_token %}
+    <script>
+      window.user = {
+        "netid": "{{ user.netid }}"
+      };
+    </script>
+    <div class="page-wrap"> <!-- another wrap to make a sticky footer -->
+        <div id="top_banner" class='no-padding'> <!-- username and logout goes here, handlebars/page-top.html -->
+        </div>
+
+    <div id="app_content">
+        {% block content %}{% endblock %}
+    </div>
+
+	<footer id="app_footer" role="contentinfo">
+		<div class="footer-bar">
+            <div class="container footer-links">
+                <div style="clear:both;">&copy; {% now "Y" %} University of Washington</div>
+            </div>
+		</div><!-- end of footer content -->
+	</footer>
+
+    <!-- do not compress - lack of trailing semicolons breaks concatenation -->
+    <script src="{% static 'vendor/js/jquery-2.1.0.min.js' %}"></script>
+    <script src="{% static 'vendor/js/bootstrap-3.3.7.min.js' %}"></script>
+    <script src="{% static 'vendor/js/handlebars-v2.0.0.js' %}"></script>
+
+    {% if not has_less_compiled %}
+      <script src="{% static 'vendor/js/less-2.0.0.min.js' %}" type="text/javascript"></script>
+    {% endif %}
+
+    {% include "handlebars/page-top.html" %}
+
+    {% block extra_js %}{% endblock %}
+    <script src="{% static "scheduled_job_manager/js/main.js" %}"></script>
+    <script src="{% static "scheduled_job_manager/js/notify.js" %}"></script>
+    <script src="{% static "vendor/js/moment.2.8.3.min.js" %}"></script>
+    <!-- <script src="{% static "scheduled_job_manager/js/handlebars-helpers.js" %}"></script> -->
+
+  </body>
+</html>

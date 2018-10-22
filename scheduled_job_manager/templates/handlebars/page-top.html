@@ -1,0 +1,27 @@
+{% load staticfiles %}
+{% verbatim %}
+    <script id="page-top" type="text/x-handlebars-template">
+        <header class="topbanner-bg" role="banner">
+            <div aria-labelledby="sjm_banner">
+                <a href="#maincontent" id="shortcut" class="visually-hidden">skip to main content</a>
+                <div class="sjm-thin-bar">
+                    <div class="sjm-wrapper container">
+                        <div class="sjm-netid">
+                            <i class="ion-person" aria-hidden="true"></i><span><span class="visually-hidden">Signed in as </span> {{netid}}</span>
+                        </div>
+                        <div class="sjm-search-links">
+                            <a href="/saml/logout"><i class="fa fa-sign-out" aria-hidden="true"></i> <span>Sign Out</span></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="sjm-navigation container">
+{% endverbatim %}
+                    <div class="sjm-wrapper" style="background-image: url({% static 'scheduled_job_manager/img/w-logo-white.png' %})">
+{% verbatim %}
+                        <h1 id="sjm_banner"><div class="sjm-title">Scheduled Job Manager</div></h1>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </script>
+{% endverbatim %}

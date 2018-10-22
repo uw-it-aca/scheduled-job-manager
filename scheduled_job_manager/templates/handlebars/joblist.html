@@ -1,0 +1,48 @@
+{% verbatim %}
+<script id="job-table-template" type="text/x-handlebars-template">
+  <div>
+    Scheduled, running and jobs that have finished are listed below.  Refresh in <span class="countdown">{{ refresh }}</span> seconds.
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Cluster</th>
+        <th>Server</th>
+        <th>Job Label</th>
+        <th>Start</th>
+        <th>Status</th>
+        <th>Exit Output</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each jobs.jobs}}
+      <tr>
+        <td>{{ task.cluster }}</td>
+        <td>{{ task.member }}</td>
+        <td>{{ task.label }}</td>
+        <td>
+          {{#if launch_date }}
+            {{ launch_date }}
+          {{else}}
+            Need to schedule
+          {{/if}}
+        </td>
+        <td>
+          {{#if exit_date}}
+          {{ exit_date }}
+          {{else}}
+          Running 
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped progess-bar-animated" role="progressbar" style="width: {{ progress }}%" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">{{ progress }} %</div>
+          </div>
+          {{/if}}
+        </td>
+        <td>
+          {{ exit_output }}
+        </td>
+      </tr>
+      {{/each}}
+  </tbody>
+</table>
+</script>
+{% endverbatim %}

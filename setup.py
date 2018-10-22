@@ -28,6 +28,8 @@ setup(
         'simplejson',
         'django-compressor',
         'django-userservice>=3.1,<4.0',
+        'django-user-agents',
+        'django-pyscss',
         'pytz',
         'UW-Django-SAML2>=1.0,<2.0',
         'django-aws-message>=1.1,<2.0',
