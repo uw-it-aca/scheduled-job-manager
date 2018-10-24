@@ -4,6 +4,34 @@
 
 {% block content %}
 <div class="container">
+  <h2>Task List</h2>
+  <div class="intro">
+    List of Tasks on various cluster servers that can be launched.  When running, they become jobs.
+  </div>
+  <div class="tasklist">
+  <table>
+    <thead>
+      <tr>
+        <th>Cluster</th>
+        <th>Job Label</th>
+        <th>Server</th>
+        <th>Schedule</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="loading"><div></div></div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>Job List</h2>
+  <div class="intro">
+    Scheduled, running and finished jobs are listed below.  Data will refresh in <span class="countdown">{{ refresh }}</span> seconds.
+  </div>
   <div class="joblist">
     <div class="loading"><div></div></div>
   </div>
@@ -11,7 +39,9 @@
 </div>
 
 {% include "handlebars/joblist.html" %}
+{% include "handlebars/tasklist.html" %}
 {% endblock %}
 
 {% block extra_js %}
+    <script src="{% static "vendor/js/popper.min.js" %}"></script>
 {% endblock %}

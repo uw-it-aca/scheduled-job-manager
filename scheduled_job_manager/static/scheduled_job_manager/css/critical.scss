@@ -219,7 +219,7 @@ a {
 }
 
 
-.joblist {
+.joblist, .tasklist {
   .intro { margin-top: 12px; font-size: 1.2em; }
   min-height: 180px;
   .loading {
@@ -242,8 +242,14 @@ a {
   }
   table {
     margin-top: 16px;
+    margin-bottom: 16px;
     width: 100%;
   }
+}
+
+.tooltip-inner {
+  text-align: left;
+  min-width: 600px;
 }
 
 @-webkit-keyframes rotation {
