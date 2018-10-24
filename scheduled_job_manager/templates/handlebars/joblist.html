@@ -1,51 +1,35 @@
 {% verbatim %}
-<script id="job-table-template" type="text/x-handlebars-template">
-  <table>
-    <thead>
-      <tr>
-        <th>Cluster</th>
-        <th>Server</th>
-        <th>Job Label</th>
-        <th>Start</th>
-        <th>Status</th>
-        <th>Exit Output</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each jobs.jobs}}
-      <tr>
-        <td>{{ task.cluster }}</td>
-        <td>{{ task.member }}</td>
-        <td>{{ task.label }}</td>
-        <td>
-          {{#if launch_date }}
-            {{ launch_date }}
-          {{else}}
-            Need to schedule
-          {{/if}}
-        </td>
-        <td>
-          {{#if exit_date}}
-          {{#if bad_exit}}<span style="color: red;">Err ({{exit_status}})</span>{{else}}Exit{{/if}} on {{ exit_date }}<br>(ran {{ runtime }})
-          {{else}}
-          Running
-          {{#if progress}}
-          <div class="progress">
-            <div class="progress-bar progress-bar-striped progess-bar-animated" role="progressbar" style="width: {{ progress }}%" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">{{ progress }} %</div>
-          </div>
-          {{/if}}
-          {{/if}}
-        </td>
-        <td>
-          {{#if exit_output_abbreviated}}
-          <a href="#" data-toggle="tooltip" data-html="true" data-placement="left" title="<pre>{{exit_output}}</pre>">{{ exit_output_abbreviated }}</a>
-          {{else}}
-          {{exit_output}}
-          {{/if}}
-        </td>
-      </tr>
-      {{/each}}
-  </tbody>
-</table>
+<script id="job-table-row-template" type="text/x-handlebars-template">
+  <tr>
+    <td>{{ task.cluster }}</td>
+    <td>{{ task.member }}</td>
+    <td>{{ task.label }}</td>
+    <td>
+      {{#if launch_date }}
+        {{ launch_date }}
+      {{else}}
+        Need to schedule
+      {{/if}}
+    </td>
+    <td>
+      {{#if exit_date}}
+      {{#if bad_exit}}<span style="color: red;">Err ({{exit_status}})</span>{{else}}Exit{{/if}} on {{ exit_date }}<br>(ran {{ runtime }})
+      {{else}}
+      Running ({{ running_time }})
+      {{#if progress}}
+      <div class="progress">
+        <div class="progress-bar progress-bar-striped progess-bar-animated" role="progressbar" style="width: {{ progress }}%" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">{{ progress }} %</div>
+      </div>
+      {{/if}}
+      {{/if}}
+    </td>
+    <td>
+      {{#if exit_output_abbreviated}}
+      <a href="#" data-toggle="tooltip" data-html="true" data-placement="left" title="<pre>{{exit_output}}</pre>">{{ exit_output_abbreviated }}</a>
+      {{else}}
+      {{exit_output}}
+      {{/if}}
+    </td>
+  </tr>
 </script>
 {% endverbatim %}

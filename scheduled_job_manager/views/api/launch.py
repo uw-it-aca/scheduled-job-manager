@@ -21,11 +21,19 @@ class JobLaunchAPI(RESTDispatch):
     """
     def get(self, request, *args, **kwargs):
         try:
-            job_cluster = Job.objects.get(job_id=kwargs['job_cluster'])
-            job_member = Job.objects.get(job_id=kwargs['job_member'])
-            job_label = Job.objects.get(job_id=kwargs['job_label'])
-            start_job(job_cluster, job_member, job_label)
-        except Job.DoesNotExist:
-            self.error_response(404, 'Unknown Job ID')
+            cluster = kwargs['job_cluster']
+            member = kwargs['job_member']
+            job_label = kwargs['job_label']
+            job = Job.objects.get(
+                schedule__task__label=job_label,
+                schedule__task__member__label=member,
+                schedule__task__member__cluster__label=cluster)
 
-        return self.json_response({'job': job.json_data()})
+            if job.is_running():
+                return self.json_response({'status': 'already running'})
+
+            start_job(cluster, member, job_label)
+        except Job.DoesNotExist:
+            start_job(cluster, member, job_label)
+
+        return self.json_response({'status': 'ok'})

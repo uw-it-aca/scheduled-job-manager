@@ -1,28 +1,18 @@
 {% verbatim %}
-<script id="task-table-template" type="text/x-handlebars-template">
-  <table>
-    <thead>
-      <tr>
-        <th>Cluster</th>
-        <th>Job Label</th>
-        <th>Server</th>
-        <th>Launch</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each tasks}}
-      <tr>
-        <td>{{ cluster }}</td>
-        <td>{{ label }}</td>
-        <td>{{ member }}</td>
-        <td>
-          {{#if exit_date}}
-          <a class='job-restart' title="Launch {{ label }}" href="#" data-job-cluster="{{ cluster }}" data-job-member="{{ member }}" data-job-label="{{ label }}"><i class="fa fa-repeat"></i></a>
-          {{/if}}
-        </td>
-      </tr>
+<script id="task-table-row-template" type="text/x-handlebars-template">
+  <tr>
+    <td>{{ cluster }}</td>
+    <td>{{ label }}</td>
+    <td>
+      <select id="members-{{ cluster_label }}-{{ label }}">
+      {{#each members}}
+      <option value="{{ this }}">{{ this }}</option>
       {{/each}}
-  </tbody>
-</table>
+      </select>
+    </td>
+    <td>
+      <a class='launch-job' title='Launch {{ label }}' href='javascript:void(0);' data-job-cluster="{{ cluster_label }}" data-job-label="{{ label }}"><i class="fa fa-repeat"></i></a>
+    </td>
+  </tr>
 </script>
 {% endverbatim %}

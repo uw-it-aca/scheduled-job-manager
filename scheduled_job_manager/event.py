@@ -51,7 +51,7 @@ class JobResponseProcessor(InnerMessageProcessor):
             logger.info("{} - {}.{}: {}".format(
                 action, cluster.label, member.label, data))
             if action == 'register':
-                job_list = data['JobList']
+                job_list = data['job_list']
 
                 for known in Task.objects.filter(member=member):
                     if known.label in job_list:
@@ -68,10 +68,9 @@ class JobResponseProcessor(InnerMessageProcessor):
             elif action == 'launch':
                 # specific job start data
                 try:
-                    label = data['JobLabel']
-
-                    job = Job.objects.get(job_id=data['JobId'])
-                    job.datetime_launch = parse(data['StartDate'])
+                    label = data['job_label']
+                    job = Job.objects.get(job_id=data['job_id'])
+                    job.datetime_launch = parse(data['start_date'])
                     job.save()
 
                     if job.is_running():
@@ -82,16 +81,16 @@ class JobResponseProcessor(InnerMessageProcessor):
                     logger.error('unknown launch task {0}'.format(label))
 
             elif action == 'status':
-                for job_id, job_state in data['Jobs'].items():
+                for job_id, job_state in data['jobs'].items():
                     try:
                         job = Job.objects.get(job_id=job_id)
-                        job.progress = int(job_state['Progress']) if (
-                            job_state['Progress']) else None
-                        job.exit_status = int(job_state['ExitStatus']) if (
-                            job_state['ExitStatus']) else None
-                        job.exit_output = job_state['ExitOutput']
-                        job.datetime_exit = parse(job_state['EndDate']) if (
-                            job_state['EndDate']) else None
+                        job.progress = int(job_state['progress']) if (
+                            job_state['progress']) else None
+                        job.exit_status = int(job_state['exit_status']) if (
+                            job_state['exit_status']) else None
+                        job.exit_output = job_state['exit_output']
+                        job.datetime_exit = parse(job_state['end_date']) if (
+                            job_state['end_date']) else None
                         job.save()
                     except Job.DoesNotExist:
                         logger.error('unknown progress job {0}'.format(job_id))
@@ -99,9 +98,9 @@ class JobResponseProcessor(InnerMessageProcessor):
             elif action == 'error':
                 # error report
                 try:
-                    error_cause = data['Cause']
-                    error_data = data['Data']
-                    job = Job.objects.get(job_id=data['JobId'])
+                    error_cause = data['cause']
+                    error_data = data['data']
+                    job = Job.objects.get(job_id=data['job_id'])
                     logger.error(
                         'error from {0}: cause: {1}: Data: {2}'.format(
                             job.json_data(), error_cause, error_data))

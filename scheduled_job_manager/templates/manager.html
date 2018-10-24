@@ -4,16 +4,40 @@
 
 {% block content %}
 <div class="container">
-  <h2>Task List</h2>
+  <h2>Job List</h2>
   <div class="intro">
-    List of Tasks on various cluster servers that can be launched.  When running, they become jobs.
+    Scheduled, running and finished jobs are listed below.  Refresh in <span class="job_countdown"></span>.
   </div>
-  <div class="tasklist">
-  <table>
+  <div class="joblist">
+  <table class="table">
     <thead>
       <tr>
         <th>Cluster</th>
+        <th>Server</th>
         <th>Job Label</th>
+        <th>Start</th>
+        <th>Status</th>
+        <th>Exit Output</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>
+          <div class="loading"><div></div></div>
+      </td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>Task List</h2>
+  <div class="intro">
+    List of Tasks on various cluster servers that can be launched.  When running, they become jobs. Refresh in <span class="task_countdown"></span>.
+  </div>
+  <div class="tasklist">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Cluster</th>
+        <th>Job</th>
         <th>Server</th>
         <th>Schedule</th>
       </tr>
@@ -27,15 +51,6 @@
     </tbody>
   </table>
   </div>
-
-  <h2>Job List</h2>
-  <div class="intro">
-    Scheduled, running and finished jobs are listed below.  Data will refresh in <span class="countdown">{{ refresh }}</span> seconds.
-  </div>
-  <div class="joblist">
-    <div class="loading"><div></div></div>
-  </div>
-
 </div>
 
 {% include "handlebars/joblist.html" %}

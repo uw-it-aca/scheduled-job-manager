@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.db import models
 from scheduled_job_manager.notification import notify_job_start
-from scheduled_job_manager.exceptions import ScheduledJobRunning
 from uuid import uuid1
 from django.utils.timezone import localtime
 from datetime import datetime, timedelta
@@ -115,7 +114,9 @@ class Job(models.Model):
         super(Job, self).save(*args, **kwargs)
 
     def is_running(self):
-        return self.exit_status is None
+        return (self.datetime_start is not None
+                and self.datetime_exit is None
+                and self.exit_status is None)
 
     def json_data(self):
         return {

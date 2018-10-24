@@ -17,7 +17,8 @@ class TaskListAPI(RESTDispatch):
     def get(self, request, *args, **kwargs):
         tasks = []
         for task in Task.objects.all():
-            data = task.json_data()
-            tasks.append(data)
+            if not task.unavailable:
+                data = task.json_data()
+                tasks.append(data)
 
         return self.json_response({'tasks': tasks})
