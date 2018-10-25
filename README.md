@@ -36,3 +36,18 @@ Project settings.py
             'QUEUE_URL': '<url_for_aws_job_sqs>'
         }
     }
+
+    # Response Queue Configureation
+    AWS_SQS = {
+        'JOB_RESPONSE_V1' : {
+            'TOPIC_ARN': 'arn:aws:sqs:...',
+            'KEY_ID': '<longrandomlookingstring>',
+            'KEY': '<longermorerandomlookingstring>',
+            'VISIBILITY_TIMEOUT': 60,
+            'MESSAGE_GATHER_SIZE': 10,
+            'VALIDATE_SNS_SIGNATURE': False,
+            'PAYLOAD_SETTINGS': {
+                'VALIDATE_MSG_SIGNATURE': True
+            }
+        }
+    }

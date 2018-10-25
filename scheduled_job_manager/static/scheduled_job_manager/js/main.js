@@ -46,7 +46,7 @@ var registerEvents = function () {
 
         startJob(cluster, member, label);
     }).on('sjm:JobLaunch', function (e, result) {
-        Notify.success('Job Start: ' + result);
+        Notify.success('Job Started');
     }).on('sjm:JobLaunchError', function (e, error) {
         Notify.error('Cannot start job: ' + error);
     });
@@ -74,13 +74,8 @@ var fetchJobs = function () {
             $content.trigger('sjm:JobListError', [error]);
         },
         complete: function() {
-            var interval = refreshCountdown($('.job_countdown'),
-                                            jobRefreshInterval);
-
-            setTimeout(function () {
-                clearInterval(interval);
-                fetchJobs();
-            }, jobRefreshInterval * 1000);
+            circleTimer($('.job-timer'), jobRefreshInterval);
+            setTimeout(fetchJobs, jobRefreshInterval * 1000);
         }
     });
 };
@@ -105,13 +100,8 @@ var fetchTasks = function () {
             $content.trigger('sjm:TaskListError', [error]);
         },
         complete: function() {
-            var interval = refreshCountdown($('.task_countdown'),
-                                            taskRefreshInterval);
-
-            setTimeout(function () {
-                clearInterval(interval);
-                fetchTasks();
-            }, taskRefreshInterval * 1000);
+            circleTimer($('.task-timer'), taskRefreshInterval);
+            setTimeout(fetchTasks, taskRefreshInterval * 1000);
         }
     });
 };
@@ -219,4 +209,16 @@ var refreshCountdown = function ($node, interval) {
 
         $node.text(count);
     }, 1000);
+};
+
+
+var circleTimer = function ($node, timeout) {
+    if ($('#cd-circle-container', $node).length === 0) {
+        $node.circletimer({
+            clockwise: false,
+            timeout: timeout * 1000
+        });
+    }
+
+    $node.circletimer('start');
 };
