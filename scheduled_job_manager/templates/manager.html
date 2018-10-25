@@ -5,11 +5,11 @@
 {% block content %}
 <div class="container">
   <h2>Job List</h2>
-  <div class="intro">
-    Scheduled, running and finished jobs are listed below.  Refresh in <span class="job_countdown"></span>.
-  </div>
   <div class="joblist">
   <table class="table">
+    <caption>
+      Scheduled, running and finished jobs are listed below.  Refresh in <span class="job_countdown"></span>.
+    </caption>
     <thead>
       <tr>
         <th>Cluster</th>
@@ -29,11 +29,11 @@
   </div>
 
   <h2>Task List</h2>
-  <div class="intro">
-    List of Tasks on various cluster servers that can be launched.  When running, they become jobs. Refresh in <span class="task_countdown"></span>.
-  </div>
   <div class="tasklist">
-  <table class="table">
+  <table class="table table-hover">
+    <caption>
+      List of Tasks on various cluster servers that can be launched.  When running, they become jobs. Refresh in <span class="task_countdown"></span>.
+    </caption>
     <thead>
       <tr>
         <th>Cluster</th>

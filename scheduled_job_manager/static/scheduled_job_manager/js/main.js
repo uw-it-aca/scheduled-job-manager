@@ -3,6 +3,7 @@
 
 var jobRefreshInterval = 8;
 var taskRefreshInterval = 15;
+var longRunningJobThreshold = 1;
 var dateFormat = 'MM/DD h:mm:ssa';
 
 $(window.document).ready(function() {
@@ -145,14 +146,16 @@ var displayJobList = function (jobs) {
 
     $.each(jobs.jobs, function () {
         var launch_moment = this.datetime_launch ? moment(this.datetime_launch) : null,
-            exit_moment = this.datetime_exit ? moment(this.datetime_exit) : null;
+            exit_moment = this.datetime_exit ? moment(this.datetime_exit) : null,
+            running_time = (!exit_moment) ? moment().diff(launch_moment, 'minutes') : null;
         
         this.launch_date = launch_moment ? launch_moment.format(dateFormat) : null;
         this.exit_date = exit_moment ? exit_moment.format(dateFormat) : null;
         this.exit_output_abbreviated = (this.exit_output && this.exit_output.length > 20) ? this.exit_output.slice(0,20) + '...' : null;
         this.bad_exit = (this.exit_status != null && this.exit_status !== 0);
         this.runtime = (launch_moment && exit_moment) ? launch_moment.from(exit_moment, true) : null;
-        this.running_time = (launch_moment) ? launch_moment.from(moment(), true) : null;
+        this.running_time = (launch_moment && !exit_moment) ? launch_moment.from(moment(), true) : null;
+        this.row_class = (this.bad_exit) ? 'danger' : (running_time && running_time > longRunningJobThreshold) ? 'warning' : null;
     });
 
     $content.html('');

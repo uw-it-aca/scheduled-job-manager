@@ -1,6 +1,6 @@
 {% verbatim %}
 <script id="job-table-row-template" type="text/x-handlebars-template">
-  <tr>
+  <tr{{#if row_class}} class="{{ row_class }}"{{/if}}>
     <td>{{ task.cluster }}</td>
     <td>{{ task.member }}</td>
     <td>{{ task.label }}</td>
