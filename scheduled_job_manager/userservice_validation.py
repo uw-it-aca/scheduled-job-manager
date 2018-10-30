@@ -24,4 +24,4 @@ def can_override_user(request):
     """
     return is_member_of_group(request,
                               getattr(settings, "SCHEDULED_JOB_ADMIN_GROUP",
-                                      'u_acadev_scheduled_job_support'))
+                                      'u_acadev_scheduled-job-support'))
