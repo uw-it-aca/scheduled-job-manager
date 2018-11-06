@@ -5,6 +5,7 @@ var jobRefreshInterval = 8;
 var taskRefreshInterval = 15;
 var longRunningJobThreshold = 1;
 var dateFormat = 'MM/DD h:mm:ssa';
+var status_socket;
 
 $(window.document).ready(function() {
 	$("span.warning").popover({'trigger':'hover'});
@@ -14,7 +15,30 @@ $(window.document).ready(function() {
 
     fetchJobs();
     fetchTasks();
+    setupJubUpdates();
 });
+
+
+var setupJubUpdates = function() {
+    status_socket = new WebSocket('wss://' + window.location.host + '/status/');
+    status_socket.onopen = function () {
+        console.log('web sockets connection created');
+    };
+
+    status_socket.onmessage = function (message) {
+        var data = JSON.parse(message.data);
+
+        if (data.hasOwnProperty('job_id')) {
+            console.log('Job id received: ' + data.job_id)
+        } else {
+            console.log('Unknown message: ' + message.data)
+        }
+    };
+
+    if (status_socket.readyState == WebSocket.OPEN) {
+        status_socket.onopen()
+    }
+};
 
 
 var displayPageHeader = function() {
@@ -74,8 +98,8 @@ var fetchJobs = function () {
             $content.trigger('sjm:JobListError', [error]);
         },
         complete: function() {
-            circleTimer($('.job-timer'), jobRefreshInterval);
-            setTimeout(fetchJobs, jobRefreshInterval * 1000);
+//            circleTimer($('.job-timer'), jobRefreshInterval);
+//            setTimeout(fetchJobs, jobRefreshInterval * 1000);
         }
     });
 };

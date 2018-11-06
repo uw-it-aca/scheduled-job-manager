@@ -34,6 +34,7 @@ setup(
         'UW-Django-SAML2>=1.0,<2.0',
         'django-aws-message>=1.2.3,<2.0',
         'Django-SupportTools>=3.1.1,<4.0',
+        'channels',
         'django_client_logger',
     ],
     license='Apache License, Version 2.0',
