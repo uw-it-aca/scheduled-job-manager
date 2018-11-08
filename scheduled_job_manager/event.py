@@ -89,6 +89,12 @@ class JobResponseProcessor(InnerMessageProcessor):
                         job.exit_status = int(job_state['exit_status']) if (
                             job_state['exit_status']) else None
                         job.exit_output = job_state['exit_output']
+                        job.datetime_launch = parse(
+                            job_state['start_date']) if (
+                                job_state['start_date']) else None
+                        job.datetime_start = parse(
+                            job_state['start_date']) if (
+                                job_state['start_date']) else None
                         job.datetime_exit = parse(job_state['end_date']) if (
                             job_state['end_date']) else None
                         job.save()
