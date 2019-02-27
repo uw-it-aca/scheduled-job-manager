@@ -10,7 +10,8 @@ def notify_job_clients(message_type, message_data):
     config = get_job_config()
     client = boto3.client('sns',
                           aws_access_key_id=config.get('KEY_ID'),
-                          aws_secret_access_key=config.get('KEY'))
+                          aws_secret_access_key=config.get('KEY'),
+                          region_name=config.get('NOTIFICATION').get('REGION'))
     response = client.publish(
         TopicArn=config.get('NOTIFICATION').get('TOPIC_ARN'),
         Message=json.dumps({
